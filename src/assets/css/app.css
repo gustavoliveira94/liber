@@ -31,6 +31,13 @@
   align-items: center;
 }
 
+.helper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 .formulario form {
   display: flex;
   flex-direction: column;
@@ -49,6 +56,14 @@
   background-color: transparent;
   border: 1px solid #3200a8;
   padding: 0 5px 0 5px;
+}
+
+.botao {
+  padding: 10px 15px;
+  background-color: transparent;
+  border: 1px solid #3200a8;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
 .formulario form button {

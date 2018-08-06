@@ -3,13 +3,15 @@
     <p v-if="errors.length" class="erros">
       <b>Atenção!</b>
       <ul>
-        <li v-for="error in errors">{{ error }}</li>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
       </ul>
     </p>
-  <div v-if="visivel" class="formulario">
-    <form action="#" @submit="checkForm">
+  <div class="helper">
+    <a class="botao" @click="pegarNome">Primeiro Nome:</a> <span>{{ primeiroNome }}</span>
+  </div>
+  <div v-if="visivel === false" class="formulario">
+    <form action="#" >
       <label for="nome">Nome:</label>
-      <button id="primeiro-nome" v-on:click="pegarNome">Primeiro Nome: <span>{{ primeiroNome }}</span></button>
       <input type="text" name="nome" id="nome" v-model="nome">
       <label for="email">E-mail:</label>
       <input type="email" name="email" id="email" v-model="email">
@@ -23,16 +25,16 @@
       <input type="password" name="confirma-senha" id="confirma-senha" v-model="confirmaSenha">
       <div class="retirar-validacao">
         <label for="retirar-validacao">Retirar Validação</label>
-        <input type="checkbox" name="retirar-validacao" id="retirar-validacao" v-on:click="retirarValidacao">
+        <input type="checkbox" name="retirar-validacao" id="retirar-validacao" v-model="ignoreValidation">
       </div>
       <div class="enviar-limpar">
-        <input type="submit" value="ENVIAR" v-on:click="alternarVisivel">
-        <input type="reset" value="LIMPAR" id="limpar">
+        <a class="botao" @click="checkForm">Enviar</a>
+        <a class="botao" @click="reset">Limpar</a>
       </div>
     </form>
   </div>
 
-    <div class="resumo" v-if="visivel === false">
+    <div class="resumo" v-if="visivel === true">
       <p>Nome:
         <resultado class="resultado" :valor="nome"></resultado>
       </p>
@@ -58,15 +60,6 @@
 
 <script>
 
-  const formulario = document.querySelector('.formulario');
-  const nome = document.querySelector('#nome');
-  const primeiroNome = document.querySelector('#pegar-nome');
-  const email = document.querySelector('#email');
-  const idade = document.querySelector('#idade');
-  const celular = document.querySelector('#celular');
-  const senha = document.querySelector('#senha');
-  const confirmaSenha = document.querySelector('#confirma-senha');
-
   import Resultado from './Resultado.vue'
 
   export default {
@@ -76,41 +69,52 @@
     data() {
       return{
         errors: [],
-        nome: nome,
-        email: email,
-        idade: idade,
-        celular: celular,
-        senha: senha,
-        confirmaSenha: confirmaSenha,
-        primeiroNome: nome,
-        visivel: true
+        nome: '',
+        email: '',
+        idade: '',
+        celular: '',
+        senha: '',
+        confirmaSenha: '',
+        primeiroNome: '',
+        visivel: false,
+        ignoreValidation: false,
     }
   },
     methods: {
-      checkForm: function (e) {
+      checkForm: function () {
         this.errors = [];
-        if (!this.nome) this.errors.push("Nome é obrigatório.");
-        if (this.nome.length > 20) this.errors.push("Nome tem mais de 20 caracteres.");
-        if (!this.email) this.errors.push("E-mail  é obrigatório.");
-        if (!this.idade) this.errors.push("Idade é obrigatório");
-        if (!this.celular) this.errors.push("Celular é obrigatório");
-        if (this.celular.length > 11 || this.celular.length < 11) this.errors.push("Celular tem mais de 11 números");
-        if (!this.senha) this.errors.push("Senha é obrigatório");
-        if (!this.confirmaSenha) this.errors.push("Confirmação de senha é obrigatório");
-        if (this.confirmaSenha != this.senha) this.errors.push("Senha é diferente da confirmação");
-        e.preventDefault();
+        if(!this.ignoreValidation) {
+          if (!this.nome) this.errors.push("Nome é obrigatório.");
+          if (this.nome.length > 20) this.errors.push("Nome tem mais de 20 caracteres.");
+          if (!this.email) this.errors.push("E-mail  é obrigatório.");
+          if (!this.idade) this.errors.push("Idade é obrigatório");
+          if (!this.celular) this.errors.push("Celular é obrigatório");
+          if (this.celular.length > 11) this.errors.push("Celular tem mais de 11 números");
+          if (!this.senha) this.errors.push("Senha é obrigatório");
+          if (!this.confirmaSenha) this.errors.push("Confirmação de senha é obrigatório");
+          if (this.confirmaSenha != this.senha) this.errors.push("Senha é diferente da confirmação");
+        }
+        this.alternarVisivel();
       },
-      retirarValidacao: function() {
-        this.checkForm = '';
-    },
       pegarNome: function() {
         this.primeiroNome = this.nome.split(' ')[0]
       },
       alternarVisivel: function() {
         if(this.confirmaSenha === this.senha && this.errors.length === 0) {
-        return this.visivel = false;
+          this.visivel = true;
+        }
+      },
+      reset() {
+        this.nome = '';
+        this.email = '';
+        this.idade = '';
+        this.celular = '';
+        this.senha = '';
+        this.confirmaSenha = '';
+        this.primeiroNome = '';
+        this.ignoreValidation = false;
+        this.errors =  [];
       }
-    }
   }
 }
 </script>
